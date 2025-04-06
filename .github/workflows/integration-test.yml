@@ -15,14 +15,14 @@ jobs:
         with:
           repository: GIBBY-GDGoC-in-GIST/GIBBY_frontend
           path: frontend
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.INTEGRATION_TOKEN }}
 
       - name: Checkout Backend
         uses: actions/checkout@v3
         with:
           repository: GIBBY-GDGoC-in-GIST/gibby-be
           path: backend
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.INTEGRATION_TOKEN }}
 
   frontend:
     needs: setup
@@ -33,7 +33,7 @@ jobs:
         with:
           repository: GIBBY-GDGoC-in-GIST/GIBBY_frontend
           path: frontend
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.INTEGRATION_TOKEN }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -61,7 +61,7 @@ jobs:
         with:
           repository: GIBBY-GDGoC-in-GIST/gibby-be
           path: backend
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.INTEGRATION_TOKEN }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -89,14 +89,14 @@ jobs:
         with:
           repository: GIBBY-GDGoC-in-GIST/GIBBY_frontend
           path: frontend
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.INTEGRATION_TOKEN }}
 
       - name: Checkout Backend
         uses: actions/checkout@v3
         with:
           repository: GIBBY-GDGoC-in-GIST/gibby-be
           path: backend
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.INTEGRATION_TOKEN }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
