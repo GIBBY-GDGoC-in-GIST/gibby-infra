@@ -10,31 +10,15 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Frontend
+      - name: Checkout Frontend and Backend
         uses: actions/checkout@v3
         with:
-          repository: GIBBY-GDGoC-in-GIST/GIBBY_frontend
-          path: frontend
-          token: ${{ secrets.INTEGRATION_TOKEN }}
-
-      - name: Checkout Backend
-        uses: actions/checkout@v3
-        with:
-          repository: GIBBY-GDGoC-in-GIST/gibby-be
-          path: backend
           token: ${{ secrets.INTEGRATION_TOKEN }}
 
   frontend:
     needs: setup
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Frontend
-        uses: actions/checkout@v3
-        with:
-          repository: GIBBY-GDGoC-in-GIST/GIBBY_frontend
-          path: frontend
-          token: ${{ secrets.INTEGRATION_TOKEN }}
-
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
@@ -45,29 +29,17 @@ jobs:
       - name: Install Dependencies
         run: |
           cd frontend
-          npm install --legacy-peer-deps
-          echo "Installed react-router-dom version:"
-          npm list react-router-dom
+          npm ci
 
       - name: Run Tests
         run: |
           cd frontend
           CI=true npm test -- --no-watch --no-cache
-        env:
-          CI: true
-          NODE_ENV: test
 
   backend:
     needs: setup
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Backend
-        uses: actions/checkout@v3
-        with:
-          repository: GIBBY-GDGoC-in-GIST/gibby-be
-          path: backend
-          token: ${{ secrets.INTEGRATION_TOKEN }}
-
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
@@ -84,47 +56,34 @@ jobs:
         run: |
           cd backend
           npm test
-        env:
-          CI: true
-          NODE_ENV: test
 
   integration-test:
     needs: [frontend, backend]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Frontend
-        uses: actions/checkout@v3
-        with:
-          repository: GIBBY-GDGoC-in-GIST/GIBBY_frontend
-          path: frontend
-          token: ${{ secrets.INTEGRATION_TOKEN }}
-
-      - name: Checkout Backend
-        uses: actions/checkout@v3
-        with:
-          repository: GIBBY-GDGoC-in-GIST/gibby-be
-          path: backend
-          token: ${{ secrets.INTEGRATION_TOKEN }}
-
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
 
-      - name: Install Dependencies
+      - name: Install Dependencies for Frontend and Backend
         run: |
-          cd frontend && npm install
-          cd ../backend && npm install
+          cd frontend && npm ci
+          cd ../backend && npm ci
 
-      - name: Start Backend Server
-        run: npm run start:dev
+      - name: Start Backend Server in Background
+        run: npm run start &
         working-directory: backend
-        env:
-          NODE_ENV: test
+
+      - name: Wait for Backend Server to Start
+        run: |
+          until curl -s http://localhost:3000; do 
+            echo "Waiting for backend server to start..."
+            sleep 5 
+          done
 
       - name: Run Integration Tests
         run: npm run test:integration
         working-directory: frontend
         env:
-          CI: true
           API_URL: http://localhost:3000 
