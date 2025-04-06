@@ -1,0 +1,122 @@
+name: Integration Test Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Frontend
+        uses: actions/checkout@v3
+        with:
+          repository: GIBBY-GDGoC-in-GIST/GIBBY_frontend
+          path: frontend
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout Backend
+        uses: actions/checkout@v3
+        with:
+          repository: GIBBY-GDGoC-in-GIST/gibby-be
+          path: backend
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  frontend:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Use Frontend
+        uses: actions/checkout@v3
+        with:
+          repository: GIBBY-GDGoC-in-GIST/GIBBY_frontend
+          path: frontend
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
+
+      - name: Install Frontend Dependencies
+        run: npm install
+        working-directory: frontend
+
+      - name: Run Frontend Tests
+        run: npm test
+        working-directory: frontend
+        env:
+          CI: true
+
+  backend:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Use Backend
+        uses: actions/checkout@v3
+        with:
+          repository: GIBBY-GDGoC-in-GIST/gibby-be
+          path: backend
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: 'backend/package-lock.json'
+
+      - name: Install Backend Dependencies
+        run: npm install
+        working-directory: backend
+
+      - name: Run Backend Tests
+        run: npm test
+        working-directory: backend
+        env:
+          CI: true
+
+  integration-test:
+    needs: [frontend, backend]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Frontend
+        uses: actions/checkout@v3
+        with:
+          repository: GIBBY-GDGoC-in-GIST/GIBBY_frontend
+          path: frontend
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout Backend
+        uses: actions/checkout@v3
+        with:
+          repository: GIBBY-GDGoC-in-GIST/gibby-be
+          path: backend
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Dependencies
+        run: |
+          cd frontend && npm install
+          cd ../backend && npm install
+
+      - name: Start Backend Server
+        run: npm run start:dev
+        working-directory: backend
+        env:
+          NODE_ENV: test
+
+      - name: Run Integration Tests
+        run: npm run test:integration
+        working-directory: frontend
+        env:
+          CI: true
+          API_URL: http://localhost:3000 
