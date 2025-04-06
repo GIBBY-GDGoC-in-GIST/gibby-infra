@@ -2,9 +2,9 @@ name: Integration Test Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
   # 외부 저장소에서 트리거될 수 있도록 설정
   repository_dispatch:
     types: [trigger-integration-test]
@@ -76,7 +76,12 @@ jobs:
   integration-test:
     needs: [frontend, backend]
     runs-on: ubuntu-latest
+    # 작업 이름에 소스 정보 표시
+    name: Integration Test triggered by ${{ github.event.client_payload.source_repo || github.event_name }}
     steps:
+      - name: Show Trigger Source
+        run: echo "Integration test triggered by ${{ github.event.client_payload.source_repo || github.event_name }}"
+
       - name: Checkout Frontend
         uses: actions/checkout@v3
         with:
@@ -130,7 +135,7 @@ jobs:
         env:
           NODE_ENV: test
 
-      - name: Run Integration Tests
+      - name: Run Integration Tests (from ${{ github.event.client_payload.source_repo || github.event_name }})
         run: |
           cd GIBBY_frontend
           export API_URL=http://localhost:3000
