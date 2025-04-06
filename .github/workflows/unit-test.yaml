@@ -1,0 +1,62 @@
+name: GIBBY CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: GIBBY_frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        run: npm install
+        working-directory: GIBBY_frontend
+
+      - name: Run frontend tests
+        run: npm test
+        working-directory: GIBBY_frontend
+        env:
+          CI: true
+
+      - name: Build frontend
+        run: npm run build
+        working-directory: GIBBY_frontend
+
+  build-and-test-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: gibby-be/package-lock.json
+
+      - name: Install backend dependencies
+        run: npm install
+        working-directory: gibby-be
+
+      - name: Run backend tests
+        run: npm test
+        working-directory: gibby-be
+        env:
+          CI: true
+
+      - name: Build backend
+        run: npm run build
+        working-directory: gibby-be
