@@ -27,11 +27,14 @@ jobs:
       - name: Install Dependencies
         run: |
           cd GIBBY_frontend
+          pwd
           npm ci
+          npm react-router-dom --save
 
       - name: Run Tests
         run: |
           cd GIBBY_frontend
+          pwd
           CI=true npm test -- --no-watch --no-cache
         env:
           CI: true
