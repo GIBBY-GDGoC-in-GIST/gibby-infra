@@ -27,9 +27,9 @@ jobs:
       - name: Install Dependencies
         run: |
           cd GIBBY_frontend
-          npm install --legacy-peer-deps
-          echo "Installed react-router-dom version:"
-          npm list react-router-dom
+          npm ci
+          npm install react-router-dom
+          npm install firebase
 
       - name: Run Tests
         run: |
