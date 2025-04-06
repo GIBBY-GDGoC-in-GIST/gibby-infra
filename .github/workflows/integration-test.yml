@@ -100,8 +100,10 @@ jobs:
           cd ../gibby-be && npm ci
 
       - name: Start Backend Server
-        run: npm run start:dev
-        working-directory: gibby-be
+        run: |
+          cd gibby-be
+          npm run start:dev &
+          sleep 10  # 서버가 완전히 시작될 때까지 대기
         env:
           NODE_ENV: test
 
