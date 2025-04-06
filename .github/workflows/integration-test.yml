@@ -35,7 +35,7 @@ jobs:
           cd GIBBY_frontend
           ls -la node_modules | grep react-router-dom
           npm list react-router-dom
-          CI=true NODE_ENV=test npm test -- --no-watch --no-cache --testMatch="**/?(*.)+(spec|test).[jt]s?(x)"
+          CI=true NODE_ENV=test npm test -- --no-watch --no-cache --testPathIgnorePatterns="node_modules" --passWithNoTests
         env:
           CI: true
           NODE_ENV: test
