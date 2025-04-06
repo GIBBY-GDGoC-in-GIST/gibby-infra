@@ -96,6 +96,11 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Install Frontend Dependencies
+        run: |
+          cd GIBBY_frontend
+          npm ci
+
       - name: Configure Integration Tests
         run: |
           cd GIBBY_frontend
