@@ -35,10 +35,11 @@ jobs:
           cd GIBBY_frontend
           ls -la node_modules | grep react-router-dom
           npm list react-router-dom
-          CI=true npm test -- --no-watch --no-cache
+          CI=true NODE_ENV=test npm test -- --no-watch --no-cache --testMatch="**/?(*.)+(spec|test).[jt]s?(x)"
         env:
           CI: true
           NODE_ENV: test
+          SKIP_PREFLIGHT_CHECK: true
 
   backend:
     runs-on: ubuntu-latest
