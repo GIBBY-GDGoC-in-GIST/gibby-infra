@@ -108,8 +108,11 @@ jobs:
           NODE_ENV: test
 
       - name: Run Integration Tests
-        run: npm run test:integration
-        working-directory: GIBBY_frontend
+        run: |
+          cd GIBBY_frontend
+          export API_URL=http://localhost:3000
+          echo "Using API URL: $API_URL"
+          CI=true npm run test:integration
         env:
           CI: true
           API_URL: http://localhost:3000 
