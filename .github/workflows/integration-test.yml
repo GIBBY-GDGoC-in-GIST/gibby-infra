@@ -28,7 +28,6 @@ jobs:
         run: |
           cd GIBBY_frontend
           npm ci
-          npm list react-router-dom
 
       - name: Run Tests
         run: |
