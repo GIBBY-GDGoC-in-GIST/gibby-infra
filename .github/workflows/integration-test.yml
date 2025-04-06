@@ -45,7 +45,8 @@ jobs:
       - name: Install Dependencies
         run: |
           cd frontend
-          npm ci
+          npm install --legacy-peer-deps
+          echo "Installed react-router-dom version:"
           npm list react-router-dom
 
       - name: Run Tests
